@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div id="app">
+    <h1>Claude Usage Tracker</h1>
+
+    <div id="status-bar">
+      <span id="status-dot"></span>
+      <span id="status-text">Checking...</span>
+    </div>
+
+    <div id="sync-info">Last sync: <span id="sync-time">Never</span></div>
+    <div id="error-box" class="hidden"></div>
+
+    <div id="preview" class="hidden">
+      <h2>Last Scraped</h2>
+      <div id="preview-entries"></div>
+    </div>
+
+    <hr>
+
+    <div id="config">
+      <label>
+        API Endpoint
+        <input type="url" id="cfg-endpoint" placeholder="http://localhost:3000">
+      </label>
+      <label>
+        API Key
+        <input type="password" id="cfg-key" placeholder="your-api-key">
+      </label>
+      <label>
+        Scrape Interval (min)
+        <input type="number" id="cfg-interval" min="5" max="1440" value="15">
+      </label>
+      <button id="btn-save">Save</button>
+      <span id="save-msg" class="hidden">Saved!</span>
+    </div>
+
+    <hr>
+    <button id="btn-scrape">Scrape Now</button>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

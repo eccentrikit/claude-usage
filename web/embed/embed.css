@@ -1,0 +1,201 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #ffffff;
+  --bg-card: #f4f4f5;
+  --bg-bar: #e4e4e7;
+  --text: #18181b;
+  --text-muted: #71717a;
+  --color-ok: #6b9eff;
+  --color-warn: #f59e0b;
+  --color-crit: #ef4444;
+  --radius: 8px;
+  --radius-sm: 4px;
+}
+
+[data-theme="dark"] {
+  --bg: #0a0a0b;
+  --bg-card: #18181b;
+  --bg-bar: #27272a;
+  --text: #fafafa;
+  --text-muted: #a1a1aa;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  padding: 12px;
+  min-height: 100vh;
+}
+
+#dashboard {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+header h1 {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+#meta {
+  display: flex;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+#entries {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.section-header {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.usage-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.card-label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.usage-percent {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.progress-wrapper {
+  position: relative;
+}
+
+.progress-container {
+  height: 8px;
+  background: var(--bg-bar);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  border-radius: var(--radius-sm);
+  transition: width 0.5s ease;
+}
+
+.progress-bar[data-level="ok"] {
+  background: var(--color-ok);
+}
+
+.progress-bar[data-level="warning"] {
+  background: var(--color-warn);
+}
+
+.progress-bar[data-level="critical"] {
+  background: var(--color-crit);
+}
+
+/* Pace marker */
+.pace-marker {
+  position: absolute;
+  top: -3px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+
+.pace-line {
+  width: 2px;
+  height: 14px;
+  background: var(--text-muted);
+  border-radius: 1px;
+  opacity: 0.7;
+}
+
+.pace-label {
+  font-size: 9px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  white-space: nowrap;
+  opacity: 0.7;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  font-size: 12px;
+}
+
+.reset-time {
+  color: var(--text-muted);
+}
+
+.pace-text {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.pace-under {
+  color: #22c55e;
+}
+
+.pace-over {
+  color: #f59e0b;
+}
+
+#no-data, #error {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+#error {
+  color: var(--color-crit);
+}
+
+.hidden {
+  display: none;
+}

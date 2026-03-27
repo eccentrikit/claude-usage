@@ -1,0 +1,19 @@
+# Runtime data
+web/data/usage.json
+
+# Extension packaging (private key!)
+extension.crx
+extension.pem
+
+# Claude Code
+.claude/
+
+# OS
+.DS_Store
+*.swp
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.code-workspace
