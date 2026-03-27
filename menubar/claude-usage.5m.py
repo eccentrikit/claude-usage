@@ -14,7 +14,7 @@ from datetime import datetime, timedelta, timezone
 # Change this to your server URL
 API_URL = "https://your-server.example.com/api/usage/"
 
-DAY_NAMES = {"sun": 0, "mon": 1, "tue": 2, "wed": 3, "thu": 4, "fri": 5, "sat": 6}
+DAY_NAMES = {"mon": 0, "tue": 1, "wed": 2, "thu": 3, "fri": 4, "sat": 5, "sun": 6}
 
 
 def fetch_usage():
