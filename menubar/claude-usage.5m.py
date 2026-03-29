@@ -29,6 +29,18 @@ def fetch_usage():
 def parse_reset_time(reset_str):
     if not reset_str:
         return None
+
+    # Format 1: "Resets in X hours", "Resets in 23 hr", etc.
+    m_relative = re.match(
+        r"Resets?\s+in\s+(\d+)\s*(?:hours?|hr)",
+        reset_str,
+        re.I,
+    )
+    if m_relative:
+        hours = int(m_relative.group(1))
+        return datetime.now() + timedelta(hours=hours)
+
+    # Format 2: "Resets Monday 2:59 AM"
     m = re.match(
         r"Resets?\s+(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\w*\s+(\d{1,2}):(\d{2})\s*(AM|PM)",
         reset_str,
