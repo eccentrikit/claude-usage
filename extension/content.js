@@ -103,7 +103,7 @@ function parseUsageSection(usedTextNode) {
   if (resetMatch) {
     resetTime = 'Resets ' + resetMatch[1].trim();
   } else {
-    var resetMatch2 = text.match(/Resets?\s+in\s+[\d\w\s,]+/);
+    var resetMatch2 = text.match(/Resets?\s+in\s+(?:\d+\s*(?:hours?|hr)\s*)?(?:\d+\s*min(?:utes?)?)?/i);
     if (resetMatch2) {
       resetTime = resetMatch2[0].trim();
     }

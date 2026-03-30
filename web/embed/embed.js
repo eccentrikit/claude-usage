@@ -37,6 +37,22 @@
       ? 'Updated ' + timeAgo(new Date(data.scrapedAt))
       : '';
 
+    // Backfill missing resetTime on weekly entries from siblings
+    var weeklyReset = null;
+    for (var i = 0; i < data.entries.length; i++) {
+      if (data.entries[i].category !== 'session' && data.entries[i].resetTime) {
+        weeklyReset = data.entries[i].resetTime;
+        break;
+      }
+    }
+    if (weeklyReset) {
+      for (var i = 0; i < data.entries.length; i++) {
+        if (data.entries[i].category !== 'session' && !data.entries[i].resetTime) {
+          data.entries[i].resetTime = weeklyReset;
+        }
+      }
+    }
+
     // Group entries by category: session first, then weekly
     var sessionEntries = data.entries.filter(function (e) { return e.category === 'session'; });
     var weeklyEntries = data.entries.filter(function (e) { return e.category !== 'session'; });
@@ -136,8 +152,18 @@
     return clamp(pct, 0, 100);
   }
 
-  // Parse "Resets Mon 3:00 AM" into the next occurrence of that day/time
+  // Parse reset time string into a Date
+  // Supports "Resets in X hours/hr" and "Resets Mon 3:00 AM"
   function parseResetTime(str) {
+    // Format 1: "Resets in X hours", "Resets in 4 hr 52 min", etc.
+    var relMatch = str.match(/Resets?\s+in\s+(?:(\d+)\s*(?:hours?|hr)\s*)?(?:(\d+)\s*min(?:utes?)?)?/i);
+    if (relMatch && (relMatch[1] || relMatch[2])) {
+      var h = relMatch[1] ? parseInt(relMatch[1], 10) : 0;
+      var m = relMatch[2] ? parseInt(relMatch[2], 10) : 0;
+      return new Date(Date.now() + (h * 60 + m) * 60 * 1000);
+    }
+
+    // Format 2: "Resets Monday 2:59 AM"
     var match = str.match(/Resets?\s+(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\w*\s+(\d{1,2}):(\d{2})\s*(AM|PM)/i);
     if (!match) return null;
 

@@ -30,15 +30,16 @@ def parse_reset_time(reset_str):
     if not reset_str:
         return None
 
-    # Format 1: "Resets in X hours", "Resets in 23 hr", etc.
+    # Format 1: "Resets in X hours", "Resets in 4 hr 52 min", etc.
     m_relative = re.match(
-        r"Resets?\s+in\s+(\d+)\s*(?:hours?|hr)",
+        r"Resets?\s+in\s+(?:(\d+)\s*(?:hours?|hr)\s*)?(?:(\d+)\s*min(?:utes?)?)?",
         reset_str,
         re.I,
     )
-    if m_relative:
-        hours = int(m_relative.group(1))
-        return datetime.now() + timedelta(hours=hours)
+    if m_relative and (m_relative.group(1) or m_relative.group(2)):
+        hours = int(m_relative.group(1)) if m_relative.group(1) else 0
+        minutes = int(m_relative.group(2)) if m_relative.group(2) else 0
+        return datetime.now() + timedelta(hours=hours, minutes=minutes)
 
     # Format 2: "Resets Monday 2:59 AM"
     m = re.match(
@@ -128,6 +129,12 @@ def main():
 
     entries = data["entries"]
 
+    # Backfill missing resetTime on weekly entries from siblings
+    weekly_reset = next((e["resetTime"] for e in entries if e.get("category") != "session" and e.get("resetTime")), None)
+    for e in entries:
+        if e.get("category") != "session" and not e.get("resetTime") and weekly_reset:
+            e["resetTime"] = weekly_reset
+
     # Find "All models" for menu bar display, fallback to first weekly
     weekly = [e for e in entries if e.get("category") != "session"]
     display_entry = weekly[0] if weekly else entries[0]
@@ -155,11 +162,9 @@ def main():
         reset_str = entry.get("resetTime") or entry.get("subtitle") or ""
         pct_color = color_for_pct(pct)
 
+        pace = calc_pace(entry)
         print(f"{label} \u2014 {pct}% | color={pct_color} size=14")
         print(f"{bar_chart(pct)} | font=Menlo size=11")
-
-        # Pace info
-        pace = calc_pace(entry)
         if pace is not None:
             diff = round(pct - pace)
             if diff <= 0:
@@ -169,9 +174,12 @@ def main():
 
         # Reset / subtitle
         if entry.get("resetTime"):
-            next_reset = parse_reset_time(entry["resetTime"])
-            remaining = time_until(next_reset)
-            print(f"{reset_str} ({remaining} left) | color=gray size=11")
+            if re.match(r"Resets?\s+in\s+", reset_str, re.I):
+                print(f"{reset_str} | color=gray size=11")
+            else:
+                next_reset = parse_reset_time(entry["resetTime"])
+                remaining = time_until(next_reset)
+                print(f"{reset_str} ({remaining} left) | color=gray size=11")
         elif reset_str:
             print(f"{reset_str} | color=gray size=11")
 

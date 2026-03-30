@@ -18,7 +18,7 @@
 }
 
 [data-theme="dark"] {
-  --bg: #0a0a0b;
+  --bg: #000000;
   --bg-card: #18181b;
   --bg-bar: #27272a;
   --text: #fafafa;
@@ -106,6 +106,7 @@ header h1 {
 
 .progress-wrapper {
   position: relative;
+  margin-bottom: 18px;
 }
 
 .progress-container {
