@@ -20,11 +20,11 @@ switch (true) {
         handle_health();
         break;
 
-    case $uri === '/api/usage' && $method === 'POST':
+    case rtrim($uri, '/') === '/api/usage' && $method === 'POST':
         handle_post_usage();
         break;
 
-    case $uri === '/api/usage' && $method === 'GET':
+    case rtrim($uri, '/') === '/api/usage' && $method === 'GET':
         handle_get_usage();
         break;
 

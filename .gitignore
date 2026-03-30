@@ -5,6 +5,9 @@ web/data/usage.json
 extension.crx
 extension.pem
 
+# Deploy
+deploy.sh
+
 # Claude Code
 .claude/
 

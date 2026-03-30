@@ -65,16 +65,7 @@ function handle_post_usage(): void {
         'entries' => $body['entries'],
     ];
 
-    $data = read_data();
-    $data['latest'] = $snapshot;
-
-    // Append to history, capped at MAX_HISTORY
-    $data['history'][] = $snapshot;
-    if (count($data['history']) > MAX_HISTORY) {
-        $data['history'] = array_slice($data['history'], -MAX_HISTORY);
-    }
-
-    write_data($data);
+    write_data(['latest' => $snapshot]);
 
     send_json(201, [
         'status' => 'ok',
