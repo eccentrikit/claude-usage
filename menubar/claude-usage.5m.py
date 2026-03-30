@@ -109,12 +109,36 @@ def bar_chart(pct, width=20):
     return "\u2588" * filled + "\u2591" * (width - filled)
 
 
-def color_for_pct(pct):
-    if pct >= 90:
-        return "#ef4444"
-    if pct >= 70:
-        return "#f59e0b"
-    return "#6b9eff"
+def lerp_color(c1, c2, t):
+    """Linearly interpolate between two (r,g,b) tuples."""
+    t = max(0.0, min(1.0, t))
+    r = int(c1[0] + (c2[0] - c1[0]) * t)
+    g = int(c1[1] + (c2[1] - c1[1]) * t)
+    b = int(c1[2] + (c2[2] - c1[2]) * t)
+    return f"#{r:02x}{g:02x}{b:02x}"
+
+
+def color_for_pace(pct, pace):
+    """Color based on pace difference: green when under, yellow/red when over."""
+    if pace is None:
+        return "#6b9eff"
+    diff = pct - pace
+    GREEN_BRIGHT = (34, 197, 94)    # well under pace
+    GREEN_LIGHT = (134, 239, 172)   # on pace
+    YELLOW = (245, 158, 11)         # moderately over
+    RED = (239, 68, 68)             # way over
+    if diff <= -15:
+        return lerp_color(GREEN_BRIGHT, GREEN_BRIGHT, 0)
+    if diff <= 0:
+        # -15 to 0: bright green to light green
+        t = (diff + 15) / 15
+        return lerp_color(GREEN_BRIGHT, GREEN_LIGHT, t)
+    if diff <= 20:
+        # 0 to +20: light green to yellow
+        return lerp_color(GREEN_LIGHT, YELLOW, diff / 20)
+    # +20 to +40: yellow to red
+    t = min((diff - 20) / 20, 1.0)
+    return lerp_color(YELLOW, RED, t)
 
 
 def main():
@@ -140,13 +164,16 @@ def main():
     display_entry = weekly[0] if weekly else entries[0]
     display_pct = int(display_entry.get("usagePercent", 0))
     pace = calc_pace(display_entry)
-    color = color_for_pct(display_pct)
+    color = color_for_pace(display_pct, pace)
 
     # Menu bar title
     if pace is not None:
         diff = round(display_pct - pace)
-        sign = "+" if diff > 0 else ""
-        print(f"{display_pct}%{sign}{diff}% | color={color}")
+        if diff == 0:
+            print(f"{display_pct}% | color={color}")
+        else:
+            sign = "+" if diff > 0 else ""
+            print(f"{display_pct}%{sign}{diff}% | color={color}")
     else:
         print(f"{display_pct}% | color={color}")
     print("---")
@@ -160,9 +187,8 @@ def main():
         label = entry.get("label", "Usage")
         pct = entry.get("usagePercent", 0)
         reset_str = entry.get("resetTime") or entry.get("subtitle") or ""
-        pct_color = color_for_pct(pct)
-
         pace = calc_pace(entry)
+        pct_color = color_for_pace(pct, pace)
         print(f"{label} \u2014 {pct}% | color={pct_color} size=14")
         print(f"{bar_chart(pct)} | font=Menlo size=11")
         if pace is not None:
